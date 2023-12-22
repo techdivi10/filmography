@@ -1,0 +1,27 @@
+import requests
+from bs4 import BeautifulSoup
+
+def get_actor_filmography(actor_name):
+    base_url = 'https://www.imdb.com/name/'
+    url = base_url + actor_name.replace(' ', '+') + '/'
+
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, 'html.parser')
+
+    filmography = soup.find('div', {'class': 'filmo-category-section'})
+
+    movies = []
+
+    if filmography:
+        for film in filmography.find_all('b'):
+            movie = film.find_next('a').text
+            movies.append(movie)
+
+    return movies
+
+actor_name = input('Enter the name of the actor: ')
+movies = get_actor_filmography(actor_name)
+
+print('Filmography of', actor_name)
+for movie in movies:
+    print(movie)
